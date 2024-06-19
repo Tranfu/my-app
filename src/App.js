@@ -3,12 +3,13 @@ import { Routes, Route, Outlet, Link, useNavigate } from "react-router-dom";
 
 // import logo from './logo.svg';
 // import './App.css';
-import ProLayout from './layouts/ProLayout';
+import ProLayout from "./layouts/ProLayout";
 
-const Home = React.lazy(() => import('./pages/Home'));
-const NoMatch = React.lazy(() => import('./pages/NoMatch'));
-const About = React.lazy(() => import('./pages/About'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+// https://github.com/remix-run/react-router/blob/dev/examples/lazy-loading/src/App.tsx
+const Home = React.lazy(() => import("./pages/Home"));
+const NoMatch = React.lazy(() => import("./pages/NoMatch"));
+const About = React.lazy(() => import("./pages/About"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 
 function App() {
   return (
