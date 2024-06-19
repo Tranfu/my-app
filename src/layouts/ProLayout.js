@@ -87,7 +87,7 @@ const List = (props) => {
         }}
       >
         {new Array(6).fill(1).map((_, index) => {
-          return <Item key={index}>1具体的解决方案-{index}</Item>;
+          return <Item key={index}>具体的解决方案-{index}</Item>;
         })}
       </div>
     </div>
