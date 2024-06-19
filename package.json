@@ -19,7 +19,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
-    "prettier": "^3.3.2",
+    "prettier": "^3.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -39,10 +39,6 @@
     "bracketSpacing": false,
     "trailingComma": "es5"
   },
-  // "lint-staged": {
-  //   "*.+(js|jsx)": "eslint --fix",
-  //   "*.+(js|json|css|md)": "prettier --write"
-  // },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
