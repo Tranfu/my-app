@@ -14,7 +14,7 @@ root.render(
     {/* https://reactrouter.com/en/main/upgrading/future#v7_starttransition */}
     {/* https://github.com/remix-run/react-router/blob/dev/examples/lazy-loading/src/main.tsx */}
     <BrowserRouter future={{v7_startTransition: true}}>
-              <App />
+                <App />
     </BrowserRouter>
   </React.StrictMode>
 );
