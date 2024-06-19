@@ -37,15 +37,15 @@
     "bracketSpacing": false,
     "trailingComma": "es5"
   },
-  "lint-staged": {
-    "*.+(js|jsx)": "eslint --fix",
-    "*.+(js|json|css|md)": "prettier --write"
-  },
   // "lint-staged": {
-  //   "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-  //     "prettier --write"
-  //   ]
+  //   "*.+(js|jsx)": "eslint --fix",
+  //   "*.+(js|json|css|md)": "prettier --write"
   // },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
