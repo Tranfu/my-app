@@ -5,15 +5,42 @@ import {
     TabletFilled,
   } from '@ant-design/icons';
   
-  export default {
+  const defaultProps = {
     route: {
       path: '/',
       routes: [
         {
           path: '/home',
           name: '欢迎',
-          icon: <SmileFilled />,
+            icon: <SmileFilled />,
           component: './Welcome',
+        },
+        {
+          path: '/dashboard',
+          name: 'Demo',
+          icon: <CrownFilled />,
+          access: 'canAdmin',
+          component: './Admin',
+          routes: [
+            {
+              path: '/dashboard/index',
+              name: '首页',
+              icon: <CrownFilled />,
+              component: './Welcome',
+            },
+            {
+              path: '/dashboard/messages',
+              name: 'Todo List',
+              icon: <CrownFilled />,
+              component: './Welcome',
+            },
+            {
+              path: '/dashboard/messages',
+              name: '消息列表',
+              icon: <CrownFilled />,
+              component: './Welcome',
+            },
+          ],
         },
         {
           path: '/admin',
@@ -37,27 +64,6 @@ import {
             {
               path: '/admin/messages',
               name: '三级页面',
-              icon: <CrownFilled />,
-              component: './Welcome',
-            },
-          ],
-        },
-        {
-          path: '/dashboard',
-          name: 'Dashboard',
-          icon: <CrownFilled />,
-          access: 'canAdmin',
-          component: './Admin',
-          routes: [
-            {
-              path: '/dashboard/index',
-              name: '首页',
-              icon: <CrownFilled />,
-              component: './Welcome',
-            },
-            {
-              path: '/dashboard/messages',
-              name: '消息列表',
               icon: <CrownFilled />,
               component: './Welcome',
             },
@@ -171,3 +177,5 @@ import {
       },
     ],
   };
+
+  export default defaultProps
