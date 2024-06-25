@@ -40,10 +40,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "additional-rule": "warn"
-    }
+    ]
   },
   "browserslist": {
     "production": [

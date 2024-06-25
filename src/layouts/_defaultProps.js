@@ -10,35 +10,25 @@ const defaultProps = {
     path: "/",
     routes: [
       {
-        path: "/home",
+        path: "/index",
         name: "欢迎",
         icon: <SmileFilled />,
-        component: "./Welcome",
       },
       {
-        path: "/dashboard",
-        name: "Demo",
+        path: "/demos",
+        name: "Demos",
         icon: <CrownFilled />,
         access: "canAdmin",
-        component: "./Admin",
         routes: [
           {
-            path: "/dashboard/index",
-            name: "首页",
+            path: "/demos/index",
+            name: "Demos",
             icon: <CrownFilled />,
-            component: "./Welcome",
           },
           {
-            path: "/dashboard/messages",
+            path: "/demos/todo-list",
             name: "Todo List",
             icon: <CrownFilled />,
-            component: "./Welcome",
-          },
-          {
-            path: "/dashboard/messages",
-            name: "消息列表",
-            icon: <CrownFilled />,
-            component: "./Welcome",
           },
         ],
       },

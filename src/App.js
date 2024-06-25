@@ -6,10 +6,10 @@ import { Routes, Route, Outlet, Link, useNavigate } from "react-router-dom";
 import ProLayout from "./layouts/ProLayout";
 
 // https://github.com/remix-run/react-router/blob/dev/examples/lazy-loading/src/App.tsx
-const Home = React.lazy(() => import("./pages/Home"));
+const Index = React.lazy(() => import("./pages/Index"));
 const NoMatch = React.lazy(() => import("./pages/NoMatch"));
-const About = React.lazy(() => import("./pages/About"));
-const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const Demos = React.lazy(() => import("./pages/Demos"));
+const TodoList = React.lazy(() => import("./pages/TodoList"));
 
 function App() {
   return (
@@ -17,28 +17,28 @@ function App() {
       {/* https://github.com/remix-run/react-router/blob/dev/examples/lazy-loading/src/App.tsx */}
       <Routes>
         <Route path="/" element={<ProLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Index />} />
           <Route
-            path="home"
+            path="index"
             element={
-              <React.Suspense fallback={<>Loading...</>}>
-                <Home />
+              <React.Suspense>
+                <Index />
               </React.Suspense>
             }
           />
           <Route
-            path="about"
+            path="demos/*"
             element={
-              <React.Suspense fallback={<>Loading...</>}>
-                <About />
+              <React.Suspense>
+                <Demos />
               </React.Suspense>
             }
           />
           <Route
-            path="dashboard/*"
+            path="demos/todo-list"
             element={
-              <React.Suspense fallback={<>Loading...</>}>
-                <Dashboard />
+              <React.Suspense>
+                <TodoList />
               </React.Suspense>
             }
           />

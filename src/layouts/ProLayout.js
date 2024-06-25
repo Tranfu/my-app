@@ -277,7 +277,8 @@ export default () => {
     // splitMenus: true,
   });
 
-  const [pathname, setPathname] = useState("/list/sub-page/sub-sub-page1");
+  // TODO: 路由 => 左侧菜单默认选中
+  const [pathname, setPathname] = useState("/index");
   const [num, setNum] = useState(40);
   if (typeof document === "undefined") {
     return <div />;
@@ -411,9 +412,9 @@ export default () => {
             menuItemRender={(item, dom) => (
               <div
                 onClick={() => {
-                  setPathname(item.path || "/welcome");
+                  setPathname(item.path || "/index");
                   // https://reactrouter.com/en/main/hooks/use-navigate#usenavigate
-                  navigate(item.path || "/welcome");
+                  navigate(item.path || "/index");
                   // startTransition(() => {
                   //     navigate(item.path || '/welcome');
                   // });
@@ -425,6 +426,11 @@ export default () => {
             {...settings}
           >
             <PageContainer
+              // https://pro-components.antdigital.dev/components/page-container#pagecontainer-demo-hidebreadmenu
+              header={{
+                title: "",
+                breadcrumb: {},
+              }}
               token={{
                 paddingInlinePageContainerContent: num,
               }}
@@ -455,7 +461,6 @@ export default () => {
                   minHeight: 800,
                 }}
               >
-                {/* <div /> */}
                 <Outlet />
               </ProCard>
             </PageContainer>
