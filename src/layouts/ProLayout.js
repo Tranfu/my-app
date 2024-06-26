@@ -456,10 +456,12 @@ export default () => {
               // ]}
             >
               <ProCard
-                style={{
-                  height: "200vh",
-                  minHeight: 800,
-                }}
+                style={
+                  {
+                    // height: "200vh",
+                    // minHeight: 800,
+                  }
+                }
               >
                 <Outlet />
               </ProCard>

@@ -3,11 +3,13 @@
 // https://www.digitalocean.com/community/tutorials/react-axios-react
 // https://vue3js.cn/interview/vue/axios.html
 // https://umijs.org/docs/max/request#request
+// https://create-react-app.dev/docs/fetching-data-with-ajax-requests/
 
-import Axios from "axios";
+import axios from "axios";
 
-const http = Axios.create({
-  baseURL: process.env.BASE_URL,
+const http = axios.create({
+  baseURL:
+    process.env.NODE_ENV === "development" ? "http://localhost:3000/api" : "",
 });
 
 // Add headers to all requests

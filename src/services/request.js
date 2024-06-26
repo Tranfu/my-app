@@ -1,22 +1,21 @@
-// https://dev.to/antoniojuniordev/5-tips-to-improve-backend-integration-react-with-axios-b3p
-// https://www.geeksforgeeks.org/axios-in-react-a-guide-for-beginners/#get-request-with-axios
-// https://www.digitalocean.com/community/tutorials/react-axios-react
-// https://vue3js.cn/interview/vue/axios.html
-// https://umijs.org/docs/max/request#request
 import http from "./http";
 
 export default {
   // We'll be able to invoke the method on our components this way.
   // await request.get( '/authenticate', { email, password } );
-  async get(url, params = {}) {
-    try {
-      const response = await http.get(url, {
-        params,
-      });
-      return response;
-    } catch (err) {
-      return false;
-    }
+  get(url, params = {}) {
+    return new Promise((resolve, reject) => {
+      http
+        .get(url, {
+          params,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   },
   async post(url, send) {
     try {
