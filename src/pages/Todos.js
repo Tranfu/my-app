@@ -2,6 +2,9 @@ import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { ProTable, TableDropdown } from "@ant-design/pro-components";
 import { Button, Dropdown, Space, Tag } from "antd";
 import { useRef } from "react";
+import { useEffect } from "react";
+import request from "services/request";
+
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -128,8 +131,25 @@ const columns = [
   },
 ];
 
-export default () => {
+export default ({ addTodo, requestTodos }) => {
   const actionRef = useRef();
+
+  useEffect(() => {
+    requestTodos();
+
+    addTodo({
+      id: 1,
+      text: "nanking",
+    });
+
+    const data = request
+      .get("get/todos", {
+        pagenum: 1,
+        pagesize: 10,
+      })
+      .then((data) => {});
+  }, []);
+
   return (
     <ProTable
       columns={columns}

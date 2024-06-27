@@ -9,7 +9,7 @@ import ProLayout from "./layouts/ProLayout";
 const Index = React.lazy(() => import("./pages/Index"));
 const NoMatch = React.lazy(() => import("./pages/NoMatch"));
 const Demos = React.lazy(() => import("./pages/Demos"));
-const TodoList = React.lazy(() => import("./pages/TodoList"));
+const Todos = React.lazy(() => import("./containers/Todos"));
 
 function App() {
   return (
@@ -35,10 +35,10 @@ function App() {
             }
           />
           <Route
-            path="demos/todo-list"
+            path="demos/todos"
             element={
               <React.Suspense>
-                <TodoList />
+                <Todos />
               </React.Suspense>
             }
           />

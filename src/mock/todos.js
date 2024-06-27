@@ -45,8 +45,7 @@ Mock.mock("/api/add/news", "post", (options) => {
 
 // 含有分页的数据列表,有需要接受的参数要使用正则匹配
 // /api/get/news?pagenum=1&pagesize=10
-Mock.mock(/\/api\/get\/news/, "get", (options) => {
-  console.log(options);
+Mock.mock(/\/api\/get\/todos/, "get", (options) => {
   // 获取传递的参数pageindex
   const pagenum = getQuery(options.url, "pagenum");
   // 获取传递的参数pagesize

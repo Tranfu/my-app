@@ -26,7 +26,7 @@ const defaultProps = {
             icon: <CrownFilled />,
           },
           {
-            path: "/demos/todo-list",
+            path: "/demos/todos",
             name: "Todo List",
             icon: <CrownFilled />,
           },
