@@ -1,21 +1,13 @@
 import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
-import { ProTable, TableDropdown } from "@ant-design/pro-components";
+import {
+  ProTable,
+  TableDropdown,
+  useDeepCompareEffectDebounce,
+} from "@ant-design/pro-components";
 import { Button, Dropdown, Space, Tag } from "antd";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
-import request from "services/request";
-
-export const waitTimePromise = async (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-export const waitTime = async (time = 100) => {
-  await waitTimePromise(time);
-};
+import { DEFAULT_PAGE_SIZE } from "constants";
 
 const columns = [
   {
@@ -26,7 +18,7 @@ const columns = [
   {
     title: "标题",
     dataIndex: "title",
-    copyable: true,
+    // search: false,
     ellipsis: true,
     tooltip: "标题过长会自动收缩",
     formItemProps: {
@@ -38,177 +30,145 @@ const columns = [
       ],
     },
   },
-  {
-    disable: true,
-    title: "状态",
-    dataIndex: "state",
-    filters: true,
-    onFilter: true,
-    ellipsis: true,
-    valueType: "select",
-    valueEnum: {
-      all: { text: "超长".repeat(50) },
-      open: {
-        text: "未解决",
-        status: "Error",
-      },
-      closed: {
-        text: "已解决",
-        status: "Success",
-        disabled: true,
-      },
-      processing: {
-        text: "解决中",
-        status: "Processing",
-      },
-    },
-  },
-  {
-    disable: true,
-    title: "标签",
-    dataIndex: "labels",
-    search: false,
-    renderFormItem: (_, { defaultRender }) => {
-      return defaultRender(_);
-    },
-    render: (_, record) => (
-      <Space>
-        {record.labels.map(({ name, color }) => (
-          <Tag color={color} key={name}>
-            {name}
-          </Tag>
-        ))}
-      </Space>
-    ),
-  },
-  {
-    title: "创建时间",
-    key: "showTime",
-    dataIndex: "created_at",
-    valueType: "date",
-    sorter: true,
-    hideInSearch: true,
-  },
-  {
-    title: "创建时间",
-    dataIndex: "created_at",
-    valueType: "dateRange",
-    hideInTable: true,
-    search: {
-      transform: (value) => {
-        return {
-          startTime: value[0],
-          endTime: value[1],
-        };
-      },
-    },
-  },
-  {
-    title: "操作",
-    valueType: "option",
-    key: "option",
-    render: (text, record, _, action) => [
-      <a
-        key="editable"
-        onClick={() => {
-          action?.startEditable?.(record.id);
-        }}
-      >
-        编辑
-      </a>,
-      <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
-        查看
-      </a>,
-      <TableDropdown
-        key="actionGroup"
-        onSelect={() => action?.reload()}
-        menus={[
-          { key: "copy", name: "复制" },
-          { key: "delete", name: "删除" },
-        ]}
-      />,
-    ],
-  },
+  // {
+  //   disable: true,
+  //   title: "状态",
+  //   dataIndex: "state",
+  //   filters: true,
+  //   onFilter: true,
+  //   ellipsis: true,
+  //   valueType: "select",
+  //   search: false,
+  //   valueEnum: {
+  //     all: { text: "全部" },
+  //     open: {
+  //       text: "未解决",
+  //       status: "Error",
+  //     },
+  //     closed: {
+  //       text: "已解决",
+  //       status: "Success",
+  //       disabled: true,
+  //     },
+  //     processing: {
+  //       text: "解决中",
+  //       status: "Processing",
+  //     },
+  //   },
+  // },
+  // {
+  //   disable: true,
+  //   title: "标签",
+  //   dataIndex: "labels",
+  //   search: false,
+  //   renderFormItem: (_, { defaultRender }) => {
+  //     return defaultRender(_);
+  //   },
+  //   render: (_, record) => (
+  //     <Space>
+  //       {record.labels.map(({ name, color }) => (
+  //         <Tag color={color} key={name}>
+  //           {name}
+  //         </Tag>
+  //       ))}
+  //     </Space>
+  //   ),
+  // },
+  // {
+  //   title: "创建时间",
+  //   key: "showTime",
+  //   dataIndex: "add_time",
+  //   valueType: "date",
+  //   sorter: true,
+  //   hideInSearch: true,
+  // },
+  // {
+  //   title: "创建时间",
+  //   dataIndex: "add_time",
+  //   valueType: "dateRange",
+  //   hideInTable: true,
+  //   search: {
+  //     transform: (value) => {
+  //       return {
+  //         startTime: value[0],
+  //         endTime: value[1],
+  //       };
+  //     },
+  //   },
+  // },
+  // {
+  //   title: "操作",
+  //   valueType: "option",
+  //   key: "option",
+  //   render: (text, record, _, action) => [
+  //     <a
+  //       key="editable"
+  //       onClick={() => {
+  //         action?.startEditable?.(record.id);
+  //       }}
+  //     >
+  //       编辑
+  //     </a>,
+  //     <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
+  //       查看
+  //     </a>,
+  //     <TableDropdown
+  //       key="actionGroup"
+  //       onSelect={() => action?.reload()}
+  //       menus={[
+  //         { key: "copy", name: "复制" },
+  //         { key: "delete", name: "删除" },
+  //       ]}
+  //     />,
+  //   ],
+  // },
 ];
 
-export default ({ addTodo, requestTodos }) => {
-  const actionRef = useRef();
+export default ({ addTodo, requestTodos, todos, total }) => {
+  const [current, setCurrent] = useState(1);
+  const [params, setParams] = useState({});
 
   useEffect(() => {
-    requestTodos();
-
-    addTodo({
-      id: 1,
-      text: "nanking",
+    requestTodos({
+      current: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
     });
-
-    const data = request
-      .get("get/todos", {
-        pagenum: 1,
-        pagesize: 10,
-      })
-      .then((data) => {});
   }, []);
 
   return (
     <ProTable
-      columns={columns}
-      actionRef={actionRef}
+      headerTitle="Todo List"
       cardBordered
-      // request={async (params, sort, filter) => {
-      //   console.log(sort, filter);
-      //   await waitTime(2000);
-      //   return request('https://proapi.azurewebsites.net/github/issues', {
-      //     params,
-      //   });
-      // }}
-      editable={{
-        type: "multiple",
-      }}
-      columnsState={{
-        persistenceKey: "pro-table-singe-demos",
-        persistenceType: "localStorage",
-        defaultValue: {
-          option: { fixed: "right", disable: true },
-        },
-        onChange(value) {
-          console.log("value: ", value);
-        },
-      }}
-      rowKey="id"
       search={{
         labelWidth: "auto",
       }}
-      options={{
-        setting: {
-          listsHeight: 400,
-        },
+      onSubmit={(params) => {
+        setParams(params);
+        requestTodos({
+          current: 1,
+          pageSize: DEFAULT_PAGE_SIZE,
+          ...params,
+        });
       }}
-      form={{
-        // 由于配置了 transform，提交的参数与定义的不同这里需要转化一下
-        syncToUrl: (values, type) => {
-          if (type === "get") {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
-        },
-      }}
+      columns={columns}
+      dataSource={todos}
       pagination={{
-        pageSize: 5,
-        onChange: (page) => console.log(page),
+        pageSize: DEFAULT_PAGE_SIZE,
+        total,
+        onChange: (current) => {
+          setCurrent(current);
+          requestTodos({
+            current,
+            pageSize: DEFAULT_PAGE_SIZE,
+            ...params,
+          });
+        },
       }}
-      dateFormatter="string"
-      headerTitle="高级表格"
       toolBarRender={() => [
         <Button
           key="button"
           icon={<PlusOutlined />}
-          onClick={() => {
-            actionRef.current?.reload();
-          }}
+          onClick={() => {}}
           type="primary"
         >
           新建
@@ -237,6 +197,18 @@ export default ({ addTodo, requestTodos }) => {
           </Button>
         </Dropdown>,
       ]}
+      options={{
+        setting: {
+          listsHeight: 400,
+        },
+        reload: () => {
+          requestTodos({
+            current,
+            pageSize: DEFAULT_PAGE_SIZE,
+            ...params,
+          });
+        },
+      }}
     />
   );
 };

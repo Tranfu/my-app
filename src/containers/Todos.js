@@ -3,27 +3,16 @@ import React from "react";
 import { connect } from "react-redux";
 import { addTodo, requestTodos } from "actions/todos";
 import Todos from "pages/Todos";
-
-// const getVisibleTodos = (todos, filter) => {
-//   switch (filter) {
-//     case VisibilityFilters.SHOW_ALL:
-//       return todos
-//     case VisibilityFilters.SHOW_COMPLETED:
-//       return todos.filter(t => t.completed)
-//     case VisibilityFilters.SHOW_ACTIVE:
-//       return todos.filter(t => !t.completed)
-//     default:
-//       throw new Error('Unknown filter: ' + filter)
-//   }
-// }
+import { getTodos } from "selectors/todos";
 
 const mapStateToProps = (state, ownProps) => ({
-  // todos: getVisibleTodos(state.todos, state.visibilityFilter)
+  todos: getTodos(state),
+  total: state.todos.total,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   addTodo: (todo) => dispatch(addTodo(todo)),
-  requestTodos: (id) => dispatch(requestTodos(id)),
+  requestTodos: (payload) => dispatch(requestTodos(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Todos);

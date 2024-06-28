@@ -1,10 +1,6 @@
 import request from "./request";
+import { PAGE_SIZE } from "constants";
 
-export function requestTodos(pagenum, pagesize) {
-  return request
-    .get("get/todos", {
-      pagenum: 1,
-      pagesize: 10,
-    })
-    .then((data) => data.list);
+export function requestTodos(payload) {
+  return request.get("get/todos", payload).then((data) => data);
 }

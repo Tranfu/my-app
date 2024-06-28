@@ -7,6 +7,7 @@ import {
 
 const initialState = {
   todos: [],
+  total: 0,
   // allIds: [],
   // byIds: {}
 };
@@ -21,9 +22,10 @@ export default function (state = initialState, action) {
       return nextState;
     }
     case TODOS_FETCH_SUCCEEDED: {
-      const { todos } = action.payload;
+      const { todos, total } = action.payload;
       const nextState = produce(state, (draft) => {
         draft.todos = todos;
+        draft.total = total;
       });
       return nextState;
     }

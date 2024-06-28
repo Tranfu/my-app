@@ -16,17 +16,16 @@ export const addTodo = (todo) => ({
   },
 });
 
-export const requestTodos = (todo) => ({
+export const requestTodos = (payload) => ({
   type: TODOS_FETCH_REQUESTED,
-  payload: {
-    todo,
-  },
+  payload,
 });
 
-export const receiveTodos = (todos) => ({
+export const receiveTodos = (todos, total) => ({
   type: TODOS_FETCH_SUCCEEDED,
   payload: {
     todos,
+    total,
   },
 });
 

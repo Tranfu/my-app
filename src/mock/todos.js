@@ -1,12 +1,13 @@
 import Mock from "mockjs";
 
 const data = Mock.mock({
-  "list|20-60": [
+  "todos|20-60": [
     {
       id: "@increment(1)",
       title: "@ctitle",
       content: "@cparagraph",
       add_time: "@date(yyyy-MM-dd hh:mm:ss)",
+      "state|1": ["open", "closed", "processing"],
     },
   ],
 });
@@ -14,12 +15,12 @@ const data = Mock.mock({
 // 删除
 Mock.mock("/api/delete/news", "post", (options) => {
   let body = JSON.parse(options.body);
-  const index = data.list.findIndex((item) => item.id === body.id);
-  data.list.splice(index, 1);
+  const index = data.data.todos.findIndex((item) => item.id === body.id);
+  data.data.todos.splice(index, 1);
   return {
     status: 200,
     message: "删除成功",
-    list: data.list,
+    todos: data.data.todos,
   };
 });
 
@@ -27,7 +28,7 @@ Mock.mock("/api/delete/news", "post", (options) => {
 Mock.mock("/api/add/news", "post", (options) => {
   let body = JSON.parse(options.body);
 
-  data.list.push(
+  data.data.todos.push(
     Mock.mock({
       id: "@increment(1)",
       title: body.title,
@@ -39,7 +40,7 @@ Mock.mock("/api/add/news", "post", (options) => {
   return {
     status: 200,
     message: "添加成功",
-    list: data.list,
+    data: data.data,
   };
 });
 
@@ -47,23 +48,24 @@ Mock.mock("/api/add/news", "post", (options) => {
 // /api/get/news?pagenum=1&pagesize=10
 Mock.mock(/\/api\/get\/todos/, "get", (options) => {
   // 获取传递的参数pageindex
-  const pagenum = getQuery(options.url, "pagenum");
+  const current = getQuery(options.url, "current");
   // 获取传递的参数pagesize
-  const pagesize = getQuery(options.url, "pagesize");
+  const pageSize = getQuery(options.url, "pageSize");
   // 截取数据的起始位置
-  const start = (pagenum - 1) * pagesize;
+  const start = (current - 1) * pageSize;
   // 截取数据的终点位置
-  const end = pagenum * pagesize;
+  const end = current * pageSize;
   // 计算总页数
-  const totalPage = Math.ceil(data.list.length / pagesize);
-  // 数据的起始位置：(pageindex-1)*pagesize  数据的结束位置：pageindex*pagesize
-  const list = pagenum > totalPage ? [] : data.list.slice(start, end);
-
+  const totalPage = Math.ceil(data.todos.length / pageSize);
+  // 数据的起始位置：(pageindex-1)*pageSize  数据的结束位置：pageindex*pageSize
+  const todos = current > totalPage ? [] : data.todos.slice(start, end);
   return {
     status: 200,
     message: "获取新闻列表成功",
-    list: list,
-    total: data.list.length,
+    data: {
+      todos: todos,
+      total: data.todos.length,
+    },
   };
 });
 

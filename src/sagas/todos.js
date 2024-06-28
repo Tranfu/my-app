@@ -7,8 +7,8 @@ import { receiveTodos } from "actions/todos";
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* fetchTodos(action) {
   try {
-    const todos = yield call(requestTodos, action.payload.id);
-    yield put(receiveTodos(todos));
+    const data = yield call(requestTodos, action.payload);
+    yield put(receiveTodos(data.todos, data.total));
   } catch (e) {
     // yield put({ type: 'TODOS_FETCH_FAILED', message: e.message })
   }
