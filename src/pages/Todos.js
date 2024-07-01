@@ -30,98 +30,109 @@ const columns = [
       ],
     },
   },
-  // {
-  //   disable: true,
-  //   title: "状态",
-  //   dataIndex: "state",
-  //   filters: true,
-  //   onFilter: true,
-  //   ellipsis: true,
-  //   valueType: "select",
-  //   search: false,
-  //   valueEnum: {
-  //     all: { text: "全部" },
-  //     open: {
-  //       text: "未解决",
-  //       status: "Error",
-  //     },
-  //     closed: {
-  //       text: "已解决",
-  //       status: "Success",
-  //       disabled: true,
-  //     },
-  //     processing: {
-  //       text: "解决中",
-  //       status: "Processing",
-  //     },
-  //   },
-  // },
-  // {
-  //   disable: true,
-  //   title: "标签",
-  //   dataIndex: "labels",
-  //   search: false,
-  //   renderFormItem: (_, { defaultRender }) => {
-  //     return defaultRender(_);
-  //   },
-  //   render: (_, record) => (
-  //     <Space>
-  //       {record.labels.map(({ name, color }) => (
-  //         <Tag color={color} key={name}>
-  //           {name}
-  //         </Tag>
-  //       ))}
-  //     </Space>
-  //   ),
-  // },
-  // {
-  //   title: "创建时间",
-  //   key: "showTime",
-  //   dataIndex: "add_time",
-  //   valueType: "date",
-  //   sorter: true,
-  //   hideInSearch: true,
-  // },
-  // {
-  //   title: "创建时间",
-  //   dataIndex: "add_time",
-  //   valueType: "dateRange",
-  //   hideInTable: true,
-  //   search: {
-  //     transform: (value) => {
-  //       return {
-  //         startTime: value[0],
-  //         endTime: value[1],
-  //       };
-  //     },
-  //   },
-  // },
-  // {
-  //   title: "操作",
-  //   valueType: "option",
-  //   key: "option",
-  //   render: (text, record, _, action) => [
-  //     <a
-  //       key="editable"
-  //       onClick={() => {
-  //         action?.startEditable?.(record.id);
-  //       }}
-  //     >
-  //       编辑
-  //     </a>,
-  //     <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
-  //       查看
-  //     </a>,
-  //     <TableDropdown
-  //       key="actionGroup"
-  //       onSelect={() => action?.reload()}
-  //       menus={[
-  //         { key: "copy", name: "复制" },
-  //         { key: "delete", name: "删除" },
-  //       ]}
-  //     />,
-  //   ],
-  // },
+  {
+    title: "状态",
+    dataIndex: "state",
+    valueType: "select",
+    // search: false,
+    disable: true,
+    filters: true,
+    onFilter: true,
+    ellipsis: true,
+    valueEnum: {
+      all: { text: "全部" },
+      open: {
+        text: "未解决",
+        status: "Error",
+      },
+      closed: {
+        text: "已解决",
+        status: "Success",
+        // disabled: true,
+      },
+      processing: {
+        text: "解决中",
+        status: "Processing",
+      },
+    },
+  },
+  {
+    title: "标签",
+    dataIndex: "labels",
+    search: false,
+    disable: true,
+    renderFormItem: (_, { defaultRender }) => {
+      return defaultRender(_);
+    },
+    render: (_, record) => (
+      <Space>
+        {record.labels.map(({ name, color }) => (
+          <Tag color={color} key={name}>
+            {name}
+          </Tag>
+        ))}
+      </Space>
+    ),
+  },
+  {
+    title: "创建时间",
+    dataIndex: "addTime",
+    valueType: "dateTime",
+    hideInSearch: true,
+    fieldProps: {
+      format: "YYYY-MM-DD HH:mm",
+    },
+  },
+  {
+    title: "创建时间",
+    dataIndex: "addTime",
+    valueType: "dateTimeRange",
+    hideInTable: true,
+    fieldProps: {
+      format: "YYYY-MM-DD HH:mm",
+    },
+    search: {
+      transform: (value) => {
+        return {
+          startTime: value[0],
+          endTime: value[1],
+        };
+      },
+    },
+  },
+  {
+    title: "备注",
+    dataIndex: "remark",
+    search: false,
+    ellipsis: true,
+    tooltip: "标题过长会自动收缩",
+  },
+  {
+    title: "操作",
+    valueType: "option",
+    key: "option",
+    render: (text, record, _, action) => [
+      <a
+        key="editable"
+        onClick={() => {
+          action?.startEditable?.(record.id);
+        }}
+      >
+        编辑
+      </a>,
+      <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
+        查看
+      </a>,
+      <TableDropdown
+        key="actionGroup"
+        onSelect={() => action?.reload()}
+        menus={[
+          { key: "copy", name: "复制" },
+          { key: "delete", name: "删除" },
+        ]}
+      />,
+    ],
+  },
 ];
 
 export default ({ addTodo, requestTodos, todos, total }) => {
@@ -142,7 +153,9 @@ export default ({ addTodo, requestTodos, todos, total }) => {
       search={{
         labelWidth: "auto",
       }}
+      rowKey="id"
       onSubmit={(params) => {
+        console.log(params);
         setParams(params);
         requestTodos({
           current: 1,

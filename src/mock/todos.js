@@ -5,9 +5,15 @@ const data = Mock.mock({
     {
       id: "@increment(1)",
       title: "@ctitle",
-      content: "@cparagraph",
-      add_time: "@date(yyyy-MM-dd hh:mm:ss)",
+      remark: "@cparagraph",
+      addTime: "@date(yyyy-MM-dd hh:mm:ss)",
       "state|1": ["open", "closed", "processing"],
+      labels: [
+        {
+          name: "important",
+          color: "red",
+        },
+      ],
     },
   ],
 });
