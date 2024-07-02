@@ -1,10 +1,12 @@
 import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   ProTable,
+  ProDescriptions,
+  ProCard,
   TableDropdown,
   useDeepCompareEffectDebounce,
 } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag, Modal } from "antd";
+import { Button, Dropdown, Space, Tag, Modal, notification } from "antd";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
@@ -13,6 +15,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const [current, setCurrent] = useState(1);
   const [params, setParams] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   const columns = [
     {
@@ -23,7 +26,6 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     {
       title: "标题",
       dataIndex: "title",
-      // search: false,
       width: 150,
       ellipsis: true,
       tooltip: "标题过长会自动收缩",
@@ -121,7 +123,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         >
           编辑
         </a>,
-        <a onClick={() => handleView()} rel="noopener noreferrer" key="view">
+        <a key="view" onClick={() => handleView()}>
           查看
         </a>,
         <TableDropdown
@@ -154,8 +156,16 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     setIsModalOpen(false);
   };
 
+  const handleReload = () => {
+    api.success({
+      message: "刷新成功",
+      pauseOnHover: true,
+    });
+  };
+
   return (
     <>
+      {contextHolder}
       <ProTable
         headerTitle="Todo List"
         cardBordered
@@ -229,23 +239,88 @@ export default ({ addTodo, requestTodos, todos, total }) => {
               pageSize: DEFAULT_PAGE_SIZE,
               ...params,
             });
+            api.success({
+              message: "刷新成功",
+              pauseOnHover: true,
+            });
           },
         }}
       />
       <Modal
-        title="详情"
         open={isModalOpen}
+        width={800}
         onCancel={handleClose}
         footer={[
           <Button key="edit" onClick={handleEdit}>
-            修改
+            编辑
+          </Button>,
+          <Button key="reload" onClick={handleReload}>
+            刷新
           </Button>,
           <Button key="close" type="primary" onClick={handleClose}>
             关闭
           </Button>,
         ]}
       >
-        内容
+        <ProDescriptions
+          title="详情"
+          column={1}
+          bordered={true}
+          dataSource={{
+            id: "这是一段文本columns",
+            date: "20200809",
+            money: "1212100",
+            state: "all",
+            state2: "open",
+          }}
+          columns={[
+            {
+              title: "文本",
+              key: "text",
+              dataIndex: "id",
+              ellipsis: true,
+              copyable: true,
+            },
+            {
+              title: "状态",
+              key: "state",
+              dataIndex: "state",
+              valueType: "select",
+              valueEnum: {
+                all: { text: "全部", status: "Default" },
+                open: {
+                  text: "未解决",
+                  status: "Error",
+                },
+                closed: {
+                  text: "已解决",
+                  status: "Success",
+                },
+              },
+            },
+            {
+              title: "状态2",
+              key: "state2",
+              dataIndex: "state2",
+            },
+            {
+              title: "时间",
+              key: "date",
+              dataIndex: "date",
+              valueType: "date",
+            },
+            {
+              title: "money",
+              key: "money",
+              dataIndex: "money",
+              valueType: "money",
+            },
+          ]}
+        >
+          <ProDescriptions.Item label="百分比" valueType="percent">
+            100
+          </ProDescriptions.Item>
+        </ProDescriptions>
       </Modal>
     </>
   );
