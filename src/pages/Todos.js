@@ -19,8 +19,10 @@ const columns = [
     title: "标题",
     dataIndex: "title",
     // search: false,
+    width: 150,
     ellipsis: true,
     tooltip: "标题过长会自动收缩",
+    disable: true,
     formItemProps: {
       rules: [
         {
@@ -34,11 +36,7 @@ const columns = [
     title: "状态",
     dataIndex: "state",
     valueType: "select",
-    // search: false,
-    disable: true,
-    filters: true,
-    onFilter: true,
-    ellipsis: true,
+    width: 100,
     valueEnum: {
       all: { text: "全部" },
       open: {
@@ -48,7 +46,7 @@ const columns = [
       closed: {
         text: "已解决",
         status: "Success",
-        // disabled: true,
+        disabled: true,
       },
       processing: {
         text: "解决中",
@@ -59,11 +57,7 @@ const columns = [
   {
     title: "标签",
     dataIndex: "labels",
-    search: false,
-    disable: true,
-    renderFormItem: (_, { defaultRender }) => {
-      return defaultRender(_);
-    },
+    width: 100,
     render: (_, record) => (
       <Space>
         {record.labels.map(({ name, color }) => (
@@ -79,6 +73,7 @@ const columns = [
     dataIndex: "addTime",
     valueType: "dateTime",
     hideInSearch: true,
+    width: 150,
     fieldProps: {
       format: "YYYY-MM-DD HH:mm",
     },
@@ -110,6 +105,7 @@ const columns = [
   {
     title: "操作",
     valueType: "option",
+    width: 110,
     key: "option",
     render: (text, record, _, action) => [
       <a
