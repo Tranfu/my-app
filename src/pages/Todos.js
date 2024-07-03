@@ -2,12 +2,10 @@ import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   ProTable,
   ProDescriptions,
-  ProCard,
   TableDropdown,
-  useDeepCompareEffectDebounce,
 } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag, Modal, notification } from "antd";
-import { useRef, useState } from "react";
+import { Button, Dropdown, Space, Tag, Modal } from "antd";
+import { useState } from "react";
 import { useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
 import { getTodo } from "services/todos";
@@ -16,7 +14,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const [current, setCurrent] = useState(1);
   const [params, setParams] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [api, contextHolder] = notification.useNotification();
+  const [id, setId] = useState(0);
   const [todo, setTodo] = useState({});
 
   useEffect(() => {
@@ -28,6 +26,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
 
   const handleView = (record) => {
     setIsModalOpen(true);
+    setId(record.id);
     getTodo({
       id: record.id,
     }).then((data) => {
@@ -42,18 +41,10 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     setIsModalOpen(false);
   };
 
-  const handleReload = () => {
-    api.success({
-      message: "刷新成功",
-      pauseOnHover: true,
-    });
-  };
-
   return (
     <>
-      {contextHolder}
       <ProTable
-        headerTitle="Todo List"
+        headerTitle="表格"
         cardBordered
         search={{
           labelWidth: "auto",
@@ -238,17 +229,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           setting: {
             listsHeight: 400,
           },
-          reload: () => {
-            requestTodos({
-              current,
-              pageSize: DEFAULT_PAGE_SIZE,
-              ...params,
-            });
-            api.success({
-              message: "刷新成功",
-              pauseOnHover: true,
-            });
-          },
+          reload: false,
         }}
       />
       <Modal
@@ -256,18 +237,9 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         open={isModalOpen}
         width={800}
         onCancel={handleClose}
-        styles={{
-          body: {
-            maxHeight: "60vh",
-            overflow: "auto",
-          },
-        }}
         footer={[
           <Button key="edit" onClick={handleEdit}>
             编辑
-          </Button>,
-          <Button key="reload" onClick={handleReload}>
-            刷新
           </Button>,
           <Button key="close" type="primary" onClick={handleClose}>
             关闭
