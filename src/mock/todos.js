@@ -75,6 +75,17 @@ Mock.mock(/\/api\/get\/todos/, "get", (options) => {
   };
 });
 
+// /api/get/news?pagenum=1&pagesize=10
+Mock.mock(/\/api\/todos/, "get", (options) => {
+  const id = options.url.split("/")[5];
+  return {
+    data: data.todos.find((todo) => todo.id === Number(id)),
+    message: "获取新闻列表成功",
+    status: 200,
+    success: true,
+  };
+});
+
 const getQuery = (url, name) => {
   const index = url.indexOf("?");
   if (index !== -1) {

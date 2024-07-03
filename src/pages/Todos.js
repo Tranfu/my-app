@@ -10,133 +10,14 @@ import { Button, Dropdown, Space, Tag, Modal, notification } from "antd";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
+import { getTodo } from "services/todos";
 
 export default ({ addTodo, requestTodos, todos, total }) => {
   const [current, setCurrent] = useState(1);
   const [params, setParams] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [api, contextHolder] = notification.useNotification();
-
-  const columns = [
-    {
-      dataIndex: "index",
-      valueType: "indexBorder",
-      width: 48,
-    },
-    {
-      title: "标题",
-      dataIndex: "title",
-      width: 150,
-      ellipsis: true,
-      tooltip: "标题过长会自动收缩",
-      disable: true,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: "此项为必填项",
-          },
-        ],
-      },
-    },
-    {
-      title: "状态",
-      dataIndex: "state",
-      valueType: "select",
-      width: 100,
-      valueEnum: {
-        all: { text: "全部" },
-        open: {
-          text: "未解决",
-          status: "Error",
-        },
-        closed: {
-          text: "已解决",
-          status: "Success",
-          disabled: true,
-        },
-        processing: {
-          text: "解决中",
-          status: "Processing",
-        },
-      },
-    },
-    {
-      title: "标签",
-      dataIndex: "labels",
-      width: 100,
-      render: (_, record) => (
-        <Space>
-          {record.labels.map(({ name, color }) => (
-            <Tag color={color} key={name}>
-              {name}
-            </Tag>
-          ))}
-        </Space>
-      ),
-    },
-    {
-      title: "创建时间",
-      dataIndex: "addTime",
-      valueType: "dateTime",
-      hideInSearch: true,
-      width: 150,
-      fieldProps: {
-        format: "YYYY-MM-DD HH:mm",
-      },
-    },
-    {
-      title: "创建时间",
-      dataIndex: "addTime",
-      valueType: "dateTimeRange",
-      hideInTable: true,
-      fieldProps: {
-        format: "YYYY-MM-DD HH:mm",
-      },
-      search: {
-        transform: (value) => {
-          return {
-            startTime: value[0],
-            endTime: value[1],
-          };
-        },
-      },
-    },
-    {
-      title: "备注",
-      dataIndex: "remark",
-      search: false,
-      ellipsis: true,
-      tooltip: "标题过长会自动收缩",
-    },
-    {
-      title: "操作",
-      valueType: "option",
-      width: 110,
-      key: "option",
-      render: (text, record, _, action) => [
-        <a
-          key="editable"
-          onClick={() => {
-            action?.startEditable?.(record.id);
-          }}
-        >
-          编辑
-        </a>,
-        <a key="view" onClick={() => handleView()}>
-          查看
-        </a>,
-        <TableDropdown
-          key="actionGroup"
-          onSelect={() => action?.reload()}
-          menus={[
-            { key: "copy", name: "复制" },
-            { key: "delete", name: "删除" },
-          ]}
-        />,
-      ],
-    },
-  ];
+  const [todo, setTodo] = useState({});
 
   useEffect(() => {
     requestTodos({
@@ -145,8 +26,13 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     });
   }, []);
 
-  const handleView = () => {
+  const handleView = (record) => {
     setIsModalOpen(true);
+    getTodo({
+      id: record.id,
+    }).then((data) => {
+      setTodo(data);
+    });
   };
 
   const handleEdit = () => {
@@ -182,7 +68,126 @@ export default ({ addTodo, requestTodos, todos, total }) => {
             ...params,
           });
         }}
-        columns={columns}
+        columns={[
+          {
+            dataIndex: "index",
+            valueType: "indexBorder",
+            width: 48,
+          },
+          {
+            title: "标题",
+            dataIndex: "title",
+            width: 150,
+            ellipsis: true,
+            tooltip: "标题过长会自动收缩",
+            disable: true,
+            formItemProps: {
+              rules: [
+                {
+                  required: true,
+                  message: "此项为必填项",
+                },
+              ],
+            },
+          },
+          {
+            title: "状态",
+            dataIndex: "state",
+            valueType: "select",
+            width: 100,
+            valueEnum: {
+              all: { text: "全部" },
+              open: {
+                text: "未解决",
+                status: "Error",
+              },
+              closed: {
+                text: "已解决",
+                status: "Success",
+                disabled: true,
+              },
+              processing: {
+                text: "解决中",
+                status: "Processing",
+              },
+            },
+          },
+          {
+            title: "标签",
+            dataIndex: "labels",
+            width: 100,
+            render: (_, record) => (
+              <Space>
+                {record.labels.map(({ name, color }) => (
+                  <Tag color={color} key={name}>
+                    {name}
+                  </Tag>
+                ))}
+              </Space>
+            ),
+          },
+          {
+            title: "创建时间",
+            dataIndex: "addTime",
+            valueType: "dateTime",
+            hideInSearch: true,
+            width: 150,
+            fieldProps: {
+              format: "YYYY-MM-DD HH:mm",
+            },
+          },
+          {
+            title: "创建时间",
+            dataIndex: "addTime",
+            valueType: "dateTimeRange",
+            hideInTable: true,
+            fieldProps: {
+              format: "YYYY-MM-DD HH:mm",
+            },
+            search: {
+              transform: (value) => {
+                return {
+                  startTime: value[0],
+                  endTime: value[1],
+                };
+              },
+            },
+          },
+          {
+            title: "备注",
+            dataIndex: "remark",
+            search: false,
+            ellipsis: true,
+            tooltip: "标题过长会自动收缩",
+          },
+          {
+            title: "操作",
+            valueType: "option",
+            width: 110,
+            key: "option",
+            render: (text, record, _, action) => [
+              <a
+                key="editable"
+                onClick={() => {
+                  action?.startEditable?.(record.id);
+                }}
+              >
+                编辑
+              </a>,
+              <a key="view" onClick={() => handleView(record)}>
+                查看
+              </a>,
+              <TableDropdown
+                key="actionGroup"
+                onSelect={() => action?.reload()}
+                menus={[
+                  { key: "copy", name: "复制" },
+                  { key: "delete", name: "删除" },
+                ]}
+              />,
+            ],
+          },
+        ]}
         dataSource={todos}
         pagination={{
           pageSize: DEFAULT_PAGE_SIZE,
@@ -247,9 +252,16 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         }}
       />
       <Modal
+        title="详情"
         open={isModalOpen}
         width={800}
         onCancel={handleClose}
+        styles={{
+          body: {
+            maxHeight: "60vh",
+            overflow: "auto",
+          },
+        }}
         footer={[
           <Button key="edit" onClick={handleEdit}>
             编辑
@@ -263,31 +275,26 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         ]}
       >
         <ProDescriptions
-          title="详情"
+          dataSource={todo}
           column={1}
           bordered={true}
-          dataSource={{
-            id: "这是一段文本columns",
-            date: "20200809",
-            money: "1212100",
-            state: "all",
-            state2: "open",
-          }}
           columns={[
             {
-              title: "文本",
-              key: "text",
+              title: "ID",
               dataIndex: "id",
-              ellipsis: true,
+              copyable: true,
+            },
+            {
+              title: "标题",
+              dataIndex: "title",
               copyable: true,
             },
             {
               title: "状态",
-              key: "state",
               dataIndex: "state",
               valueType: "select",
               valueEnum: {
-                all: { text: "全部", status: "Default" },
+                all: { text: "全部" },
                 open: {
                   text: "未解决",
                   status: "Error",
@@ -295,32 +302,38 @@ export default ({ addTodo, requestTodos, todos, total }) => {
                 closed: {
                   text: "已解决",
                   status: "Success",
+                  disabled: true,
+                },
+                processing: {
+                  text: "解决中",
+                  status: "Processing",
                 },
               },
             },
             {
-              title: "状态2",
-              key: "state2",
-              dataIndex: "state2",
+              title: "标签",
+              dataIndex: "labels",
+              render: (_, record) => (
+                <Space>
+                  {record.labels?.map(({ name, color }) => (
+                    <Tag color={color} key={name}>
+                      {name}
+                    </Tag>
+                  ))}
+                </Space>
+              ),
             },
             {
-              title: "时间",
-              key: "date",
-              dataIndex: "date",
+              title: "创建时间",
+              dataIndex: "addTime",
               valueType: "date",
             },
             {
-              title: "money",
-              key: "money",
-              dataIndex: "money",
-              valueType: "money",
+              title: "备注",
+              dataIndex: "remark",
             },
           ]}
-        >
-          <ProDescriptions.Item label="百分比" valueType="percent">
-            100
-          </ProDescriptions.Item>
-        </ProDescriptions>
+        />
       </Modal>
     </>
   );
