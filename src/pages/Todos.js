@@ -1,10 +1,17 @@
 import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   ProTable,
-  ProDescriptions,
   TableDropdown,
+  ProDescriptions,
+  ModalForm,
+  ProForm,
+  ProFormDateRangePicker,
+  ProFormSelect,
+  ProFormText,
+  ProFormTextArea,
+  ProFormCheckbox,
 } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag, Modal } from "antd";
+import { Button, Dropdown, Space, Tag, Modal, Form, message } from "antd";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
@@ -16,6 +23,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [id, setId] = useState(0);
   const [todo, setTodo] = useState({});
+  const [modalVisit, setModalVisit] = useState(false);
 
   useEffect(() => {
     requestTodos({
@@ -40,6 +48,16 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const handleClose = () => {
     setIsModalOpen(false);
   };
+
+  const waitTime = (time = 100) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, time);
+    });
+  };
+
+  const [form] = Form.useForm();
 
   return (
     <>
@@ -196,7 +214,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           <Button
             key="button"
             icon={<PlusOutlined />}
-            onClick={() => {}}
+            onClick={() => setModalVisit(true)}
             type="primary"
           >
             新建
@@ -307,6 +325,54 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           ]}
         />
       </Modal>
+      <ModalForm
+        title="新建"
+        // readonly={true}
+        open={modalVisit}
+        onOpenChange={setModalVisit}
+        form={form}
+        autoFocusFirstInput
+        submitTimeout={2000}
+        onFinish={async (values) => {
+          await waitTime(2000);
+          console.log(values);
+          message.success("提交成功");
+          return true;
+        }}
+      >
+        <ProFormText
+          name="title"
+          label="标题"
+          tooltip="最长为 24 位"
+          placeholder="请输入标题"
+        />
+        <ProFormSelect
+          label="状态"
+          name="state"
+          value={"open"}
+          options={[
+            {
+              value: "open",
+              label: "未解决",
+            },
+            {
+              value: "closed",
+              label: "已解决",
+            },
+            {
+              value: "processing",
+              label: "解决中",
+            },
+          ]}
+        />
+        <ProFormCheckbox.Group
+          name="labels"
+          // layout="vertical"
+          label="标签"
+          options={["low", "middle", "high"]}
+        />
+        <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
+      </ModalForm>
     </>
   );
 };
