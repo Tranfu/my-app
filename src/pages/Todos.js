@@ -264,66 +264,49 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           </Button>,
         ]}
       >
-        <ProDescriptions
-          dataSource={todo}
-          column={1}
-          bordered={true}
-          columns={[
-            {
-              title: "ID",
-              dataIndex: "id",
-              copyable: true,
-            },
-            {
-              title: "标题",
-              dataIndex: "title",
-              copyable: true,
-            },
-            {
-              title: "状态",
-              dataIndex: "state",
-              valueType: "select",
-              valueEnum: {
-                all: { text: "全部" },
-                open: {
-                  text: "未解决",
-                  status: "Error",
-                },
-                closed: {
-                  text: "已解决",
-                  status: "Success",
-                  disabled: true,
-                },
-                processing: {
-                  text: "解决中",
-                  status: "Processing",
-                },
+        <ProDescriptions dataSource={todo} column={1} bordered={true}>
+          <ProDescriptions.Item label="ID" copyable={true}>
+            {todo.id}
+          </ProDescriptions.Item>
+          <ProDescriptions.Item label="标题" copyable={true}>
+            {todo.title}
+          </ProDescriptions.Item>
+          <ProDescriptions.Item
+            label="状态"
+            valueEnum={{
+              all: { text: "全部", status: "Default" },
+              open: {
+                text: "未解决",
+                status: "Error",
               },
-            },
-            {
-              title: "标签",
-              dataIndex: "labels",
-              render: (_, record) => (
-                <Space>
-                  {record.labels?.map(({ name, color }) => (
-                    <Tag color={color} key={name}>
-                      {name}
-                    </Tag>
-                  ))}
-                </Space>
-              ),
-            },
-            {
-              title: "创建时间",
-              dataIndex: "addTime",
-              valueType: "date",
-            },
-            {
-              title: "备注",
-              dataIndex: "remark",
-            },
-          ]}
-        />
+              closed: {
+                text: "已解决",
+                status: "Success",
+              },
+              processing: {
+                text: "解决中",
+                status: "Processing",
+              },
+            }}
+          >
+            {todo.state}
+          </ProDescriptions.Item>
+          <ProDescriptions.Item label="标签">
+            <Space>
+              {todo.labels?.map(({ name, color }) => (
+                <Tag color={color} key={name}>
+                  {name}
+                </Tag>
+              ))}
+            </Space>
+          </ProDescriptions.Item>
+          <ProDescriptions.Item label="创建时间" valueType="date">
+            {todo.addTime}
+          </ProDescriptions.Item>
+          <ProDescriptions.Item label="备注">
+            {todo.remark}
+          </ProDescriptions.Item>
+        </ProDescriptions>
       </Modal>
       <ModalForm
         title="新建"
@@ -345,6 +328,14 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           label="标题"
           tooltip="最长为 24 位"
           placeholder="请输入标题"
+          rules={[
+            {
+              required: true,
+            },
+            {
+              max: 24,
+            },
+          ]}
         />
         <ProFormSelect
           label="状态"
@@ -367,7 +358,6 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         />
         <ProFormCheckbox.Group
           name="labels"
-          // layout="vertical"
           label="标签"
           options={["low", "middle", "high"]}
         />
