@@ -4,8 +4,6 @@ import {
   TableDropdown,
   ProDescriptions,
   ModalForm,
-  ProForm,
-  ProFormDateRangePicker,
   ProFormSelect,
   ProFormText,
   ProFormTextArea,
@@ -32,6 +30,11 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     });
   }, []);
 
+  const handleCreate = () => {
+    if (!!todo.id) setTodo({});
+    setModalVisit(true);
+  };
+
   const handleView = (record) => {
     setIsModalOpen(true);
     setId(record.id);
@@ -42,9 +45,18 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     });
   };
 
-  const handleEdit = () => {
+  const handleEdit = (record) => {
     setIsModalOpen(false);
+    setModalVisit(true);
+    getTodo({
+      id: record.id || todo.id,
+    }).then((data) => {
+      setTodo(data);
+    });
   };
+
+  const handleDelete = () => {};
+
   const handleClose = () => {
     setIsModalOpen(false);
   };
@@ -56,8 +68,6 @@ export default ({ addTodo, requestTodos, todos, total }) => {
       }, time);
     });
   };
-
-  const [form] = Form.useForm();
 
   return (
     <>
@@ -175,12 +185,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
             width: 110,
             key: "option",
             render: (text, record, _, action) => [
-              <a
-                key="editable"
-                onClick={() => {
-                  action?.startEditable?.(record.id);
-                }}
-              >
+              <a key="editable" onClick={() => handleEdit(record)}>
                 编辑
               </a>,
               <a key="view" onClick={() => handleView(record)}>
@@ -188,11 +193,16 @@ export default ({ addTodo, requestTodos, todos, total }) => {
               </a>,
               <TableDropdown
                 key="actionGroup"
-                onSelect={() => action?.reload()}
-                menus={[
-                  { key: "copy", name: "复制" },
-                  { key: "delete", name: "删除" },
-                ]}
+                onSelect={(action) => {
+                  switch (action) {
+                    case "delete":
+                      handleDelete(record);
+                      break;
+                    default:
+                      break;
+                  }
+                }}
+                menus={[{ key: "delete", name: "删除" }]}
               />,
             ],
           },
@@ -214,7 +224,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           <Button
             key="button"
             icon={<PlusOutlined />}
-            onClick={() => setModalVisit(true)}
+            onClick={handleCreate}
             type="primary"
           >
             新建
@@ -264,7 +274,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           </Button>,
         ]}
       >
-        <ProDescriptions dataSource={todo} column={1} bordered={true}>
+        <ProDescriptions column={1} bordered="true">
           <ProDescriptions.Item label="ID" copyable={true}>
             {todo.id}
           </ProDescriptions.Item>
@@ -309,12 +319,13 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         </ProDescriptions>
       </Modal>
       <ModalForm
-        title="新建"
-        // readonly={true}
+        title={!!todo.id ? "编辑" : "新建"}
         open={modalVisit}
         onOpenChange={setModalVisit}
-        form={form}
         autoFocusFirstInput
+        modalProps={{
+          destroyOnClose: true,
+        }}
         submitTimeout={2000}
         onFinish={async (values) => {
           await waitTime(2000);
@@ -324,8 +335,9 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         }}
       >
         <ProFormText
-          name="title"
           label="标题"
+          name="title"
+          value={todo.title}
           tooltip="最长为 24 位"
           placeholder="请输入标题"
           rules={[
@@ -340,7 +352,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         <ProFormSelect
           label="状态"
           name="state"
-          value={"open"}
+          value={todo.state}
           options={[
             {
               value: "open",
@@ -357,11 +369,17 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           ]}
         />
         <ProFormCheckbox.Group
-          name="labels"
           label="标签"
+          name="labels"
+          value={todo.labels}
           options={["low", "middle", "high"]}
         />
-        <ProFormTextArea name="remark" label="备注" placeholder="请输入备注" />
+        <ProFormTextArea
+          label="备注"
+          name="remark"
+          value={todo.remark}
+          placeholder="请输入备注"
+        />
       </ModalForm>
     </>
   );
