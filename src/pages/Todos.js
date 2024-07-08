@@ -13,9 +13,9 @@ import { Button, Dropdown, Space, Tag, Modal, Form, message } from "antd";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
-import { getTodo } from "services/todos";
+import { getTodo, addTodo, updateTodo, deleteTodo } from "services/todos";
 
-export default ({ addTodo, requestTodos, todos, total }) => {
+export default ({ getTodos, todos, total }) => {
   const [current, setCurrent] = useState(1);
   const [params, setParams] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +24,8 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const [modalVisit, setModalVisit] = useState(false);
 
   useEffect(() => {
-    requestTodos({
+    getTodos({
+      ...params,
       current: 1,
       pageSize: DEFAULT_PAGE_SIZE,
     });
@@ -33,6 +34,32 @@ export default ({ addTodo, requestTodos, todos, total }) => {
   const handleCreate = () => {
     if (!!todo.id) setTodo({});
     setModalVisit(true);
+  };
+
+  const handleFinish = (values) => {
+    if (!!todo.id) {
+      updateTodo({
+        ...values,
+        id: todo.id,
+      }).then(() => {
+        getTodos({
+          ...params,
+          current,
+          pageSize: DEFAULT_PAGE_SIZE,
+        });
+        message.success("更新成功");
+      });
+    } else {
+      addTodo(values).then(() => {
+        getTodos({
+          ...params,
+          current,
+          pageSize: DEFAULT_PAGE_SIZE,
+        });
+        message.success("提交成功");
+      });
+    }
+    return true;
   };
 
   const handleView = (record) => {
@@ -55,18 +82,20 @@ export default ({ addTodo, requestTodos, todos, total }) => {
     });
   };
 
-  const handleDelete = () => {};
+  const handleDelete = (todo) => {
+    deleteTodo({
+      id: todo.id,
+    }).then(() => {
+      getTodos({
+        ...params,
+        current,
+        pageSize: DEFAULT_PAGE_SIZE,
+      });
+    });
+  };
 
   const handleClose = () => {
     setIsModalOpen(false);
-  };
-
-  const waitTime = (time = 100) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-      }, time);
-    });
   };
 
   return (
@@ -81,10 +110,10 @@ export default ({ addTodo, requestTodos, todos, total }) => {
         onSubmit={(params) => {
           console.log(params);
           setParams(params);
-          requestTodos({
+          getTodos({
+            ...params,
             current: 1,
             pageSize: DEFAULT_PAGE_SIZE,
-            ...params,
           });
         }}
         columns={[
@@ -202,7 +231,10 @@ export default ({ addTodo, requestTodos, todos, total }) => {
                       break;
                   }
                 }}
-                menus={[{ key: "delete", name: "删除" }]}
+                menus={[
+                  { key: "delete", name: "删除" },
+                  { key: "other", name: "按钮" },
+                ]}
               />,
             ],
           },
@@ -213,10 +245,10 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           total,
           onChange: (current) => {
             setCurrent(current);
-            requestTodos({
+            getTodos({
+              ...params,
               current,
               pageSize: DEFAULT_PAGE_SIZE,
-              ...params,
             });
           },
         }}
@@ -327,12 +359,7 @@ export default ({ addTodo, requestTodos, todos, total }) => {
           destroyOnClose: true,
         }}
         submitTimeout={2000}
-        onFinish={async (values) => {
-          await waitTime(2000);
-          console.log(values);
-          message.success("提交成功");
-          return true;
-        }}
+        onFinish={handleFinish}
       >
         <ProFormText
           label="标题"

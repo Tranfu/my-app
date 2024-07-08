@@ -16,7 +16,7 @@ export const addTodo = (todo) => ({
   },
 });
 
-export const requestTodos = (payload) => ({
+export const getTodos = (payload) => ({
   type: TODOS_FETCH_REQUESTED,
   payload,
 });
