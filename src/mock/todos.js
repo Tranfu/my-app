@@ -44,10 +44,12 @@ Mock.mock(/\/api\/todos/, "get", (options) => {
     const totalPage = Math.ceil(data.todos.length / pageSize);
     // 数据的起始位置：(pageindex-1)*pageSize  数据的结束位置：pageindex*pageSize
     let todos = data.todos;
+    let total = data.todos.length;
     if (!!title) {
       todos = data.todos.filter((todo) =>
         todo.title.includes(decodeURIComponent(title)),
       );
+      total = todos.length;
     }
     todos = current > totalPage ? [] : todos.slice(start, end);
     return {
@@ -55,7 +57,7 @@ Mock.mock(/\/api\/todos/, "get", (options) => {
       message: "获取新闻列表成功",
       data: {
         todos: todos,
-        total: data.todos.length,
+        total,
       },
     };
   }

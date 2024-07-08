@@ -9,31 +9,58 @@ import {
   ProFormTextArea,
   ProFormCheckbox,
 } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag, Modal, Form, message } from "antd";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Button, Dropdown, Space, Tag, Modal, message } from "antd";
+import { useState, useEffect } from "react";
 import { DEFAULT_PAGE_SIZE } from "constants";
 import { getTodo, addTodo, updateTodo, deleteTodo } from "services/todos";
 
 export default ({ getTodos, todos, total }) => {
   const [current, setCurrent] = useState(1);
   const [params, setParams] = useState({});
+  const [tableDataChangeTime, setTableDataChangeTime] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [id, setId] = useState(0);
   const [todo, setTodo] = useState({});
   const [modalVisit, setModalVisit] = useState(false);
 
   useEffect(() => {
     getTodos({
       ...params,
-      current: 1,
+      current,
       pageSize: DEFAULT_PAGE_SIZE,
     });
-  }, []);
+  }, [params, current, tableDataChangeTime]);
+
+  const handleSubmit = (params) => {
+    setCurrent(1);
+    setParams(params);
+  };
+
+  const handleView = (record) => {
+    setIsModalOpen(true);
+    getTodo({
+      id: record.id,
+    }).then((data) => {
+      setTodo(data);
+    });
+  };
 
   const handleCreate = () => {
     if (!!todo.id) setTodo({});
     setModalVisit(true);
+  };
+
+  const handleEdit = (record) => {
+    setIsModalOpen(false);
+    getTodo({
+      id: record.id || todo.id,
+    }).then((data) => {
+      setTodo(data);
+      setModalVisit(true);
+    });
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
   };
 
   const handleFinish = (values) => {
@@ -42,60 +69,28 @@ export default ({ getTodos, todos, total }) => {
         ...values,
         id: todo.id,
       }).then(() => {
-        getTodos({
-          ...params,
-          current,
-          pageSize: DEFAULT_PAGE_SIZE,
-        });
+        setTableDataChangeTime(Date.now());
         message.success("更新成功");
       });
     } else {
       addTodo(values).then(() => {
-        getTodos({
-          ...params,
-          current,
-          pageSize: DEFAULT_PAGE_SIZE,
-        });
-        message.success("提交成功");
+        setTableDataChangeTime(Date.now());
+        message.success("创建成功");
       });
     }
     return true;
-  };
-
-  const handleView = (record) => {
-    setIsModalOpen(true);
-    setId(record.id);
-    getTodo({
-      id: record.id,
-    }).then((data) => {
-      setTodo(data);
-    });
-  };
-
-  const handleEdit = (record) => {
-    setIsModalOpen(false);
-    setModalVisit(true);
-    getTodo({
-      id: record.id || todo.id,
-    }).then((data) => {
-      setTodo(data);
-    });
   };
 
   const handleDelete = (todo) => {
     deleteTodo({
       id: todo.id,
     }).then(() => {
-      getTodos({
-        ...params,
-        current,
-        pageSize: DEFAULT_PAGE_SIZE,
-      });
+      setTableDataChangeTime(Date.now());
     });
   };
 
-  const handleClose = () => {
-    setIsModalOpen(false);
+  const handleChange = (current) => {
+    setCurrent(current);
   };
 
   return (
@@ -108,15 +103,7 @@ export default ({ getTodos, todos, total }) => {
           layout: "vertical",
         }}
         rowKey="id"
-        onSubmit={(params) => {
-          console.log(params);
-          setParams(params);
-          getTodos({
-            ...params,
-            current: 1,
-            pageSize: DEFAULT_PAGE_SIZE,
-          });
-        }}
+        onSubmit={handleSubmit}
         columns={[
           {
             dataIndex: "index",
@@ -234,7 +221,8 @@ export default ({ getTodos, todos, total }) => {
                 }}
                 menus={[
                   { key: "delete", name: "删除" },
-                  { key: "other", name: "按钮" },
+                  { key: "1", name: "1rd item" },
+                  { key: "2", name: "2rd item" },
                 ]}
               />,
             ],
@@ -244,14 +232,7 @@ export default ({ getTodos, todos, total }) => {
         pagination={{
           pageSize: DEFAULT_PAGE_SIZE,
           total,
-          onChange: (current) => {
-            setCurrent(current);
-            getTodos({
-              ...params,
-              current,
-              pageSize: DEFAULT_PAGE_SIZE,
-            });
-          },
+          onChange: handleChange,
         }}
         toolBarRender={() => [
           <Button
@@ -273,10 +254,6 @@ export default ({ getTodos, todos, total }) => {
                 {
                   label: "2nd item",
                   key: "2",
-                },
-                {
-                  label: "3rd item",
-                  key: "3",
                 },
               ],
             }}
@@ -361,11 +338,11 @@ export default ({ getTodos, todos, total }) => {
         }}
         submitTimeout={2000}
         onFinish={handleFinish}
+        initialValues={todo}
       >
         <ProFormText
           label="标题"
           name="title"
-          value={todo.title}
           tooltip="最长为 24 位"
           placeholder="请输入标题"
           rules={[
@@ -380,7 +357,6 @@ export default ({ getTodos, todos, total }) => {
         <ProFormSelect
           label="状态"
           name="state"
-          value={todo.state}
           options={[
             {
               value: "open",
@@ -399,15 +375,9 @@ export default ({ getTodos, todos, total }) => {
         <ProFormCheckbox.Group
           label="标签"
           name="labels"
-          value={todo.labels}
           options={["low", "middle", "high"]}
         />
-        <ProFormTextArea
-          label="备注"
-          name="remark"
-          value={todo.remark}
-          placeholder="请输入备注"
-        />
+        <ProFormTextArea label="备注" name="remark" placeholder="请输入备注" />
       </ModalForm>
     </>
   );
