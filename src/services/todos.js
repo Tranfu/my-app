@@ -2,7 +2,7 @@ import request from "./request";
 import { PAGE_SIZE } from "constants";
 
 export function getTodos(payload) {
-  return request.get("get/todos", payload).then((data) => data);
+  return request.get("todos", payload).then((data) => data);
 }
 
 export function getTodo(payload) {

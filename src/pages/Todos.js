@@ -105,6 +105,7 @@ export default ({ getTodos, todos, total }) => {
         cardBordered
         search={{
           labelWidth: "auto",
+          layout: "vertical",
         }}
         rowKey="id"
         onSubmit={(params) => {
