@@ -9,101 +9,34 @@ import {
   ProFormTextArea,
   ProFormCheckbox,
 } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag, Modal, message } from "antd";
-import { useState, useEffect } from "react";
-import { DEFAULT_PAGE_SIZE } from "constants";
-import { getTodo, addTodo, updateTodo, deleteTodo } from "services/todos";
+import { Button, Dropdown, Space, Tag, Modal } from "antd";
+import { useCRUD } from "hooks/useCRUD";
+import {
+  getTodos,
+  getTodo,
+  addTodo,
+  updateTodo,
+  deleteTodo,
+} from "services/todos";
 
-export default ({ getTodos, todos, total }) => {
-  const [current, setCurrent] = useState(1);
-  const [params, setParams] = useState({});
-  const [tableDataChangeTime, setTableDataChangeTime] = useState(Date.now());
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [todo, setTodo] = useState({});
-  const [modalVisit, setModalVisit] = useState(false);
-
-  useEffect(() => {
-    getTodos({
-      ...params,
-      current,
-      pageSize: DEFAULT_PAGE_SIZE,
-    });
-  }, [params, current, tableDataChangeTime]);
-
-  const handleSubmit = (params) => {
-    setCurrent(1);
-    setParams(params);
-  };
-
-  const handleView = (record) => {
-    setIsModalOpen(true);
-    getTodo({
-      id: record.id,
-    }).then((data) => {
-      setTodo(data);
-    });
-  };
-
-  const handleCreate = () => {
-    if (!!todo.id) setTodo({});
-    setModalVisit(true);
-  };
-
-  const handleEdit = (record) => {
-    setIsModalOpen(false);
-    getTodo({
-      id: record.id || todo.id,
-    }).then((data) => {
-      setTodo(data);
-      setModalVisit(true);
-    });
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleFinish = (values) => {
-    if (!!todo.id) {
-      updateTodo({
-        ...values,
-        id: todo.id,
-      }).then(() => {
-        setTableDataChangeTime(Date.now());
-        message.success("更新成功");
-      });
-    } else {
-      addTodo(values).then(() => {
-        setTableDataChangeTime(Date.now());
-        message.success("创建成功");
-      });
-    }
-    return true;
-  };
-
-  const handleDelete = (todo) => {
-    deleteTodo({
-      id: todo.id,
-    }).then(() => {
-      setTableDataChangeTime(Date.now());
-    });
-  };
-
-  const handleChange = (current) => {
-    setCurrent(current);
-  };
+// export default ({ getTodos, todos, total }) => {
+export default () => {
+  const {
+    entity,
+    proTab,
+    toolBars,
+    buttons,
+    modal,
+    proDescriptions,
+    modalForm,
+    handleDelete,
+    getButtons,
+  } = useCRUD(getTodos, getTodo, addTodo, updateTodo, deleteTodo);
 
   return (
     <>
       <ProTable
-        headerTitle="表格"
-        cardBordered
-        search={{
-          labelWidth: "auto",
-          layout: "vertical",
-        }}
-        rowKey="id"
-        onSubmit={handleSubmit}
+        {...proTab}
         columns={[
           {
             dataIndex: "index",
@@ -202,12 +135,7 @@ export default ({ getTodos, todos, total }) => {
             width: 110,
             key: "option",
             render: (text, record, _, action) => [
-              <a key="editable" onClick={() => handleEdit(record)}>
-                编辑
-              </a>,
-              <a key="view" onClick={() => handleView(record)}>
-                查看
-              </a>,
+              ...getButtons(record),
               <TableDropdown
                 key="actionGroup"
                 onSelect={(action) => {
@@ -228,34 +156,29 @@ export default ({ getTodos, todos, total }) => {
             ],
           },
         ]}
-        dataSource={todos}
-        pagination={{
-          pageSize: DEFAULT_PAGE_SIZE,
-          total,
-          onChange: handleChange,
-        }}
         toolBarRender={() => [
-          <Button
-            key="button"
-            icon={<PlusOutlined />}
-            onClick={handleCreate}
-            type="primary"
-          >
-            新建
-          </Button>,
+          ...toolBars,
           <Dropdown
             key="menu"
             menu={{
               items: [
                 {
-                  label: "1st item",
                   key: "1",
+                  label: "1st item",
                 },
                 {
-                  label: "2nd item",
                   key: "2",
+                  label: "2nd item",
                 },
               ],
+              onClick: ({ key }) => {
+                switch (key) {
+                  case "1":
+                    break;
+                  default:
+                    break;
+                }
+              },
             }}
           >
             <Button>
@@ -263,33 +186,14 @@ export default ({ getTodos, todos, total }) => {
             </Button>
           </Dropdown>,
         ]}
-        options={{
-          setting: {
-            listsHeight: 400,
-          },
-          reload: false,
-        }}
       />
-      <Modal
-        title="详情"
-        open={isModalOpen}
-        width={800}
-        onCancel={handleClose}
-        footer={[
-          <Button key="edit" onClick={handleEdit}>
-            编辑
-          </Button>,
-          <Button key="close" type="primary" onClick={handleClose}>
-            关闭
-          </Button>,
-        ]}
-      >
-        <ProDescriptions column={1} bordered="true">
+      <Modal {...modal}>
+        <ProDescriptions {...proDescriptions}>
           <ProDescriptions.Item label="ID" copyable={true}>
-            {todo.id}
+            {entity.id}
           </ProDescriptions.Item>
           <ProDescriptions.Item label="标题" copyable={true}>
-            {todo.title}
+            {entity.title}
           </ProDescriptions.Item>
           <ProDescriptions.Item
             label="状态"
@@ -309,11 +213,11 @@ export default ({ getTodos, todos, total }) => {
               },
             }}
           >
-            {todo.state}
+            {entity.state}
           </ProDescriptions.Item>
           <ProDescriptions.Item label="标签">
             <Space>
-              {todo.labels?.map(({ name, color }) => (
+              {entity.labels?.map(({ name, color }) => (
                 <Tag color={color} key={name}>
                   {name}
                 </Tag>
@@ -321,25 +225,14 @@ export default ({ getTodos, todos, total }) => {
             </Space>
           </ProDescriptions.Item>
           <ProDescriptions.Item label="创建时间" valueType="date">
-            {todo.addTime}
+            {entity.addTime}
           </ProDescriptions.Item>
           <ProDescriptions.Item label="备注">
-            {todo.remark}
+            {entity.remark}
           </ProDescriptions.Item>
         </ProDescriptions>
       </Modal>
-      <ModalForm
-        title={!!todo.id ? "编辑" : "新建"}
-        open={modalVisit}
-        onOpenChange={setModalVisit}
-        autoFocusFirstInput
-        modalProps={{
-          destroyOnClose: true,
-        }}
-        submitTimeout={2000}
-        onFinish={handleFinish}
-        initialValues={todo}
-      >
+      <ModalForm {...modalForm}>
         <ProFormText
           label="标题"
           name="title"

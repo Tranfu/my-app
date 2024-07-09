@@ -56,7 +56,7 @@ Mock.mock(/\/api\/todos/, "get", (options) => {
       status: 200,
       message: "获取新闻列表成功",
       data: {
-        todos: todos,
+        list: todos,
         total,
       },
     };
