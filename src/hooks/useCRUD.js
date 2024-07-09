@@ -162,14 +162,18 @@ export function useCRUD(
     modalForm: {
       title: !!entity.id ? "编辑" : "新建",
       open: isFormModalOpen,
-      onOpenChange: handleOpenChange,
+      initialValues: entity,
       autoFocusFirstInput: true,
       modalProps: {
         destroyOnClose: true,
       },
       submitTimeout: 2000,
+      onOpenChange: handleOpenChange,
       onFinish: handleFinish,
-      initialValues: entity,
+      style: {
+        maxHeight: "80vh",
+        overflow: "auto",
+      },
     },
     handleDelete,
   };

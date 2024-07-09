@@ -8,6 +8,10 @@ import {
   ProFormText,
   ProFormTextArea,
   ProFormCheckbox,
+  ProFormRadio,
+  ProFormDigit,
+  ProFormUploadButton,
+  ProFormDatePicker,
 } from "@ant-design/pro-components";
 import { Button, Dropdown, Space, Tag, Modal } from "antd";
 import { useCRUD } from "hooks/useCRUD";
@@ -25,7 +29,6 @@ export default () => {
     entity,
     proTab,
     toolBars,
-    buttons,
     modal,
     proDescriptions,
     modalForm,
@@ -35,6 +38,7 @@ export default () => {
 
   return (
     <>
+      {/* https://procomponents.ant.design/components/table */}
       <ProTable
         {...proTab}
         columns={[
@@ -188,6 +192,7 @@ export default () => {
         ]}
       />
       <Modal {...modal}>
+        {/* https://procomponents.ant.design/components/descriptions */}
         <ProDescriptions {...proDescriptions}>
           <ProDescriptions.Item label="ID" copyable={true}>
             {entity.id}
@@ -233,6 +238,7 @@ export default () => {
         </ProDescriptions>
       </Modal>
       <ModalForm {...modalForm}>
+        {/* https://procomponents.ant.design/components/field-set */}
         <ProFormText
           label="标题"
           name="title"
@@ -269,6 +275,28 @@ export default () => {
           label="标签"
           name="labels"
           options={["low", "middle", "high"]}
+        />
+        <ProFormRadio.Group
+          label="发票类型"
+          name="invoiceType"
+          initialValue="发票"
+          options={["发票", "普票", "无票"]}
+        />
+        <ProFormDatePicker
+          label="时间"
+          name="date"
+          transform={(value) => {
+            return {
+              // date: moment(value).unix(),
+            };
+          }}
+        />
+        <ProFormDigit width="xs" name="num" label="合同份数" initialValue={5} />
+        <ProFormUploadButton
+          extra="支持扩展名：.jpg .zip .doc .wps"
+          label="倒签报备附件"
+          name="file"
+          title="上传文件"
         />
         <ProFormTextArea label="备注" name="remark" placeholder="请输入备注" />
       </ModalForm>
