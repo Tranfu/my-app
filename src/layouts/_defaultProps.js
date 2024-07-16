@@ -27,7 +27,12 @@ const defaultProps = {
           },
           {
             path: "/demos/todos",
-            name: "Todo List",
+            name: "代办列表",
+            icon: <CrownFilled />,
+          },
+          {
+            path: "/demos/users",
+            name: "用户列表",
             icon: <CrownFilled />,
           },
         ],

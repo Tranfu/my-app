@@ -69,13 +69,13 @@ export function useCRUD(
         ...values,
         id: entity.id,
       }).then(() => {
-        setTableDataChangeTime(Date.now());
         message.success("更新成功");
+        setTableDataChangeTime(Date.now());
       });
     } else {
       addEntity(values).then(() => {
-        setTableDataChangeTime(Date.now());
         message.success("创建成功");
+        setTableDataChangeTime(Date.now());
       });
     }
     return true;
@@ -95,6 +95,11 @@ export function useCRUD(
 
   const handleChange = (current) => {
     setCurrent(current);
+  };
+
+  const handleReload = () => {
+    message.success("刷新成功");
+    setTableDataChangeTime(Date.now());
   };
 
   const data = {
@@ -118,7 +123,7 @@ export function useCRUD(
         setting: {
           listsHeight: 400,
         },
-        reload: false,
+        reload: handleReload,
       },
     },
     toolBars: [
@@ -170,10 +175,6 @@ export function useCRUD(
       submitTimeout: 2000,
       onOpenChange: handleOpenChange,
       onFinish: handleFinish,
-      style: {
-        maxHeight: "80vh",
-        overflow: "auto",
-      },
     },
     handleDelete,
   };

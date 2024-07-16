@@ -10,6 +10,7 @@ const Index = React.lazy(() => import("./pages/Index"));
 const NoMatch = React.lazy(() => import("./pages/NoMatch"));
 const Demos = React.lazy(() => import("./pages/Demos"));
 const Todos = React.lazy(() => import("./containers/Todos"));
+const Users = React.lazy(() => import("./pages/Users"));
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
             element={
               <React.Suspense>
                 <Todos />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="demos/users"
+            element={
+              <React.Suspense>
+                <Users />
               </React.Suspense>
             }
           />
