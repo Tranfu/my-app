@@ -8,7 +8,7 @@ import { receiveTodos } from "actions/todos";
 function* fetchTodos(action) {
   try {
     const data = yield call(getTodos, action.payload);
-    yield put(receiveTodos(data.todos, data.total));
+    yield put(receiveTodos(data.list, data.total));
   } catch (e) {
     // yield put({ type: 'TODOS_FETCH_FAILED', message: e.message })
   }

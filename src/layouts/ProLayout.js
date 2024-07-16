@@ -26,7 +26,7 @@ import {
   Popover,
   theme,
 } from "antd";
-import React, { useState, startTransition } from "react";
+import React, { useState, startTransition, useEffect } from "react";
 import { Routes, Route, Outlet, Link, useNavigate } from "react-router-dom";
 
 import defaultProps from "./_defaultProps";
@@ -269,6 +269,28 @@ const SearchInput = () => {
 //   "colorPrimary": "#1677FF"
 // }
 
+const dfs = (routes, route) => {
+  let openKeys = [];
+  let selectedKeys = [];
+  routes.forEach((rt) => {
+    if (rt.path === window.location.pathname) {
+      openKeys = [route.key];
+      selectedKeys = [rt.key];
+    }
+    if (route.routes) {
+      const res = dfs(route.routes, rt);
+      if (res.selectedKeys.length > 0) {
+        openKeys = res.openKeys;
+        selectedKeys = res.selectedKeys;
+      }
+    }
+  });
+  return {
+    openKeys,
+    selectedKeys,
+  };
+};
+
 export default () => {
   const navigate = useNavigate();
   const [settings, setSetting] = useState({
@@ -277,9 +299,18 @@ export default () => {
     // splitMenus: true,
   });
 
-  // TODO: 路由 => 左侧菜单默认选中
   const [pathname, setPathname] = useState("/index");
   const [num, setNum] = useState(40);
+  const [openKeys, setOpenKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+
+  useEffect(() => {
+    // TODO: 路由 => 左侧菜单默认选中
+    const res = dfs(defaultProps.route.routes, defaultProps.route);
+    setOpenKeys(res.openKeys);
+    setSelectedKeys(res.selectedKeys);
+  }, []);
+
   if (typeof document === "undefined") {
     return <div />;
   }
@@ -333,6 +364,8 @@ export default () => {
             menu={{
               collapsedShowGroupTitle: true,
             }}
+            openKeys={openKeys}
+            selectedKeys={selectedKeys}
             avatarProps={{
               src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
               size: "small",
@@ -412,6 +445,8 @@ export default () => {
             menuItemRender={(item, dom) => (
               <div
                 onClick={() => {
+                  setSelectedKeys([item.key]);
+                  setOpenKeys(item.pro_layout_parentKeys);
                   setPathname(item.path || "/index");
                   // https://reactrouter.com/en/main/hooks/use-navigate#usenavigate
                   navigate(item.path || "/index");

@@ -51,7 +51,7 @@ export default () => {
 
   return (
     <>
-      {/* 主页表格 */}
+      {/* 页面表格 */}
       {/* https://procomponents.ant.design/components/table */}
       <ProTable
         {...proTab}

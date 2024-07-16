@@ -7,7 +7,7 @@ export const proComponents = {
     cardBordered: true,
     search: {
       labelWidth: "auto",
-      layout: "vertical",
+      //   layout: "vertical",
     },
     rowKey: "id",
   },
@@ -28,7 +28,7 @@ export const proComponents = {
     modalProps: {
       destroyOnClose: true,
     },
-    size: "small",
+    // size: "small",
     submitTimeout: 2000,
   },
 };

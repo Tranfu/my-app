@@ -2,7 +2,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { addTodo, getTodos } from "actions/todos";
-import Todos from "pages/Todos";
+import ReduxTodos from "pages/ReduxTodos";
 import { selectTodos } from "selectors/todos";
 
 const mapStateToProps = (state, ownProps) => ({
@@ -15,4 +15,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   getTodos: (payload) => dispatch(getTodos(payload)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Todos);
+export default connect(mapStateToProps, mapDispatchToProps)(ReduxTodos);

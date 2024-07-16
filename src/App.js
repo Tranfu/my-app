@@ -9,7 +9,9 @@ import ProLayout from "./layouts/ProLayout";
 const Index = React.lazy(() => import("./pages/Index"));
 const NoMatch = React.lazy(() => import("./pages/NoMatch"));
 const Demos = React.lazy(() => import("./pages/Demos"));
-const Todos = React.lazy(() => import("./containers/Todos"));
+const ComponentTodos = React.lazy(() => import("./pages/ComponentTodos"));
+const ReduxTodos = React.lazy(() => import("./containers/ReduxTodos"));
+const Todos = React.lazy(() => import("./pages/Todos"));
 const Users = React.lazy(() => import("./pages/Users"));
 
 function App() {
@@ -32,6 +34,22 @@ function App() {
             element={
               <React.Suspense>
                 <Demos />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="demos/component-todos"
+            element={
+              <React.Suspense>
+                <ComponentTodos />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="demos/redux-todos"
+            element={
+              <React.Suspense>
+                <ReduxTodos />
               </React.Suspense>
             }
           />

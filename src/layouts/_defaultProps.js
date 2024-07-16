@@ -17,22 +17,38 @@ const defaultProps = {
       {
         path: "/demos",
         name: "Demos",
+        key: "demos",
         icon: <CrownFilled />,
         access: "canAdmin",
         routes: [
           {
             path: "/demos/index",
             name: "Demos",
+            key: "demos-index",
             icon: <CrownFilled />,
           },
           {
-            path: "/demos/users",
-            name: "用户列表",
+            path: "/demos/component-todos",
+            name: "代办列表（组件）",
+            key: "component-todos",
+            icon: <CrownFilled />,
+          },
+          {
+            path: "/demos/redux-todos",
+            name: "代办列表（Redux）",
+            key: "redux-todos",
             icon: <CrownFilled />,
           },
           {
             path: "/demos/todos",
-            name: "代办列表",
+            name: "代办列表（自定义 Hooks）",
+            key: "todos",
+            icon: <CrownFilled />,
+          },
+          {
+            name: "用户列表（自定义 Hooks）",
+            path: "/demos/users",
+            key: "users",
             icon: <CrownFilled />,
           },
         ],
