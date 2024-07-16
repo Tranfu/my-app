@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, message } from "antd";
 import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
-import { DEFAULT_PAGE_SIZE } from "constants";
+import { DEFAULT_PAGE_SIZE, proComponents } from "constants";
 
 export function useCRUD(
   getEntities,
@@ -74,7 +74,7 @@ export function useCRUD(
       });
     } else {
       addEntity(values).then(() => {
-        message.success("创建成功");
+        message.success("新建成功");
         setTableDataChangeTime(Date.now());
       });
     }
@@ -89,6 +89,7 @@ export function useCRUD(
     deleteEntity({
       id: entity.id,
     }).then(() => {
+      message.success("删除成功");
       setTableDataChangeTime(Date.now());
     });
   };
@@ -105,13 +106,7 @@ export function useCRUD(
   const data = {
     entity,
     proTab: {
-      headerTitle: "表格",
-      cardBordered: true,
-      search: {
-        labelWidth: "auto",
-        layout: "vertical",
-      },
-      rowKey: "id",
+      ...proComponents.proTab,
       onSubmit: handleSubmit,
       dataSource: entities,
       pagination: {
@@ -120,9 +115,6 @@ export function useCRUD(
         onChange: handleChange,
       },
       options: {
-        setting: {
-          listsHeight: 400,
-        },
         reload: handleReload,
       },
     },
@@ -147,9 +139,8 @@ export function useCRUD(
       ];
     },
     modal: {
-      title: "详情",
+      ...proComponents.modal,
       open: isModalOpen,
-      width: 800,
       onCancel: handleClose,
       footer: [
         <Button key="edit" onClick={handleEdit}>
@@ -161,18 +152,13 @@ export function useCRUD(
       ],
     },
     proDescriptions: {
-      column: 1,
-      bordered: true,
+      ...proComponents.proDescriptions,
     },
     modalForm: {
+      ...proComponents.modalForm,
       title: !!entity.id ? "编辑" : "新建",
       open: isFormModalOpen,
       initialValues: entity,
-      autoFocusFirstInput: true,
-      modalProps: {
-        destroyOnClose: true,
-      },
-      submitTimeout: 2000,
       onOpenChange: handleOpenChange,
       onFinish: handleFinish,
     },

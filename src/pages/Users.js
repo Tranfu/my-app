@@ -64,7 +64,7 @@ export default () => {
           {
             title: "用户名",
             dataIndex: "name",
-            width: 150,
+            width: 100,
             ellipsis: true,
             tooltip: "标题过长会自动收缩",
             disable: true,
@@ -107,7 +107,6 @@ export default () => {
           {
             title: "备注",
             dataIndex: "remark",
-
             search: false,
             ellipsis: true,
             tooltip: "标题过长会自动收缩",
@@ -158,14 +157,16 @@ export default () => {
       {/* 详情对话框 */}
       {/* https://procomponents.ant.design/components/descriptions */}
       <Modal {...modal}>
-        <ProDescriptions {...proDescriptions}>
-          <ProDescriptions.Item label="ID" copyable={true}>
-            {entity.id}
-          </ProDescriptions.Item>
-          <ProDescriptions.Item label="用户名" copyable={true}>
+        <ProDescriptions
+          {...proDescriptions}
+          labelStyle={{
+            width: 70,
+          }}
+        >
+          <ProDescriptions.Item label="用户姓名" copyable={true}>
             {entity.name}
           </ProDescriptions.Item>
-          <ProDescriptions.Item label="创建时间" valueType="date">
+          <ProDescriptions.Item label="创建时间" valueType="dateTime">
             {entity.addTime}
           </ProDescriptions.Item>
           <ProDescriptions.Item label="备注">
