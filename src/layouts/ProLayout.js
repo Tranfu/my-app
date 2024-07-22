@@ -364,7 +364,7 @@ export default () => {
             menu={{
               collapsedShowGroupTitle: true,
             }}
-            openKeys={openKeys}
+            defaultOpenKeys={openKeys}
             selectedKeys={selectedKeys}
             avatarProps={{
               src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
